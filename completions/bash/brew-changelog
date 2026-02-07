@@ -1,0 +1,84 @@
+# Bash completion for brew changelog
+
+__brew_changelog_has_word() {
+  local word=$1
+  local i
+  for (( i = 1; i < COMP_CWORD; i++ )); do
+    [[ ${COMP_WORDS[i]} == "${word}" ]] && return 0
+  done
+  return 1
+}
+
+_brew_changelog() {
+  local cur="${COMP_WORDS[COMP_CWORD]}"
+
+  case "${cur}" in
+    -*)
+      COMPREPLY=()
+      while read -r line; do COMPREPLY+=("${line}"); done < <(compgen -W "
+      --formula
+      --cask
+      --pattern
+      -o
+      --open
+      --print-url
+      --allow-missing
+      --debug
+      --quiet
+      --verbose
+      --help
+      " -- "${cur}")
+      return
+      ;;
+    *) ;;
+  esac
+
+  if __brew_changelog_has_word "--formula"; then
+    __brew_complete_formulae
+    return
+  fi
+
+  if __brew_changelog_has_word "--cask"; then
+    __brew_complete_casks
+    return
+  fi
+
+  __brew_complete_formulae
+  __brew_complete_casks
+}
+
+if declare -F _brew >/dev/null 2>&1 && ! declare -F _brew__core >/dev/null 2>&1; then
+  eval "$(declare -f _brew | sed '1s/^_brew[[:space:]]*()/_brew__core()/')"
+
+  _brew() {
+    local i=1 cmd
+
+    while [[ "${i}" -lt "${COMP_CWORD}" ]]; do
+      local s="${COMP_WORDS[i]}"
+      case "${s}" in
+        --*)
+          cmd="${s}"
+          break
+          ;;
+        -*)
+          ;;
+        *)
+          cmd="${s}"
+          break
+          ;;
+      esac
+      (( i++ ))
+    done
+
+    if [[ "${cmd}" == "changelog" ]]; then
+      _brew_changelog
+      return
+    fi
+
+    _brew__core
+  }
+
+  complete -o bashdefault -o default -F _brew brew
+fi
+
+complete -o bashdefault -o default -F _brew_changelog brew-changelog

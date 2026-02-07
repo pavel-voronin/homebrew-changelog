@@ -1,0 +1,36 @@
+#compdef brew
+#autoload
+
+# typed: false
+# frozen_string_literal: true
+
+__brew_changelog_targets() {
+  if (( ${words[(Ie)--formula]} > 0 )); then
+    __brew_formulae
+    return
+  fi
+
+  if (( ${words[(Ie)--cask]} > 0 )); then
+    __brew_casks
+    return
+  fi
+
+  _alternative \
+    'formulae:formula:__brew_formulae' \
+    'casks:cask:__brew_casks'
+}
+
+_brew_changelog() {
+  _arguments \
+    '(-h --help)'{-h,--help}'[Show this message]' \
+    '(--formula --cask)--formula[Treat the named argument as a formula]' \
+    '(--formula --cask)--cask[Treat the named argument as a cask]' \
+    '--pattern=[Comma-separated wildcard patterns to match changelog filenames]:patterns' \
+    '(-o --open --print-url)'{-o,--open}'[Open found changelog in browser and print its URL]' \
+    '(-o --open --print-url)--print-url[Print found changelog URL without opening browser]' \
+    '--allow-missing[Exit successfully if no changelog is found]' \
+    '--debug[Display any debugging information]' \
+    '--quiet[Make some output more quiet]' \
+    '--verbose[Make some output more verbose]' \
+    '*:formula or cask:__brew_changelog_targets'
+}

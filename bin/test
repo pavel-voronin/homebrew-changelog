@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+cd "$(dirname "$0")/.."
+
+if ! command -v brew >/dev/null 2>&1; then
+  echo "Error: brew is not installed or not in PATH." >&2
+  exit 1
+fi
+
+brew ruby -- -e 'Dir["test/**/*_test.rb"].sort.each { |f| require "./" + f }'
