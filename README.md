@@ -7,6 +7,7 @@ Instant access to changelogs for Homebrew packages.
 ```bash
 brew tap pavel-voronin/changelog
 brew changelog node | more
+brew changelog node -o
 ```
 
 ## Usage
