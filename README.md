@@ -1,4 +1,4 @@
-# brew-changelog
+# `brew changelog`
 
 Instant access to changelogs for Homebrew packages.
 
